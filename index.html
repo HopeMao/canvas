@@ -1,0 +1,108 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Drawing Area</title>
+<!-- You can add your style here rather than in an external style sheet. -->
+
+<style>
+	canvas {
+	    border:5px solid #d3d3d3;
+	    background-color: #f1f1f1;
+	    display: block;
+	}
+	/* looks better like this lol */
+	.crosshair {cursor: crosshair;}
+</style>
+
+</head>
+<body>
+    <!-- DO NOT MODIFY THIS HTML -->
+    <canvas class="crosshair" id = "myCanvas" width = "350" height = "500"  ></canvas>
+    <input type = "color" id = "picker"/>
+</body>
+
+<script>
+
+	// setting variables
+	var canvas = document.querySelector("#myCanvas");
+	var ctx = canvas.getContext("2d");
+  var color = "blue";
+	// to track the color when the pen is picked up
+	var lastColor = "blue";
+	// getting the browser dimensions to offset
+	var w = window.innerWidth;
+	var h = window.innerHeight;
+
+	// setting canvas height and width
+	document.getElementById("myCanvas").width = (w * 0.8);
+	document.getElementById("myCanvas").height = (h * 0.8);
+
+	// for the color picker
+	picker.addEventListener('input', function (e) {
+		// listening for when the input value changes
+		// once it changes, the color is updated to picker's value.
+		color = this.value;
+	})
+
+	function draw(xpos, ypos){
+		// readjusting the cursor position
+		xpos -= canvas.offsetLeft;
+		ypos -= canvas.offsetTop;
+		// the circle and its fill
+		ctx.fillStyle = color;
+	  ctx.arc(xpos, ypos, 5, 0, 2 * Math.PI);
+	  // template is: xpos, ypos, radius,starting angle, ending angle
+	  ctx.fill();
+	}
+
+	myCanvas.addEventListener('mousemove', function (e) {
+		// when the mouse moves, draw one circle at that mouse coordinate
+		// as mouse moves, many circles will be drawn
+		console.log(e);
+		ctx.beginPath();
+		draw(e.x, e.y);
+		ctx.closePath();
+	})
+
+	window.addEventListener('keydown', function (e) {
+		console.log(e);
+		// change colors
+		if (e.keyCode == 71) {
+			color = "green";
+			lastColor = "green";
+		}
+		if (e.keyCode == 66) {
+			color = "blue";
+			lastColor = "blue";
+		}
+		if (e.keyCode == 82) {
+			color = "red";
+			lastColor = "red";
+		}
+		if (e.keyCode == 89) {
+			color = "yellow";
+			lastColor = "yellow";
+		}
+		// pressing space clears the canvas
+		if (e.keyCode == 32) {
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			// template is: starts at 0, 0, and spans to the canvas width and height
+		}
+		// arrow up
+		if (e.keyCode == 38) {
+			// the only method I could think of to "lift" the pen lol
+			color = "transparent";
+		}
+		// arrow down
+		if (e.keyCode == 40) {
+			// the color is reverted from transparent back to the last used color
+			color = lastColor;
+		}
+	})
+
+
+</script>
+
+</html>
