@@ -35,6 +35,8 @@
 	var w = window.innerWidth;
 	var h = window.innerHeight;
 
+	var drawing = true;
+
 	// setting canvas height and width
 	document.getElementById("myCanvas").width = (w * 0.8);
 	document.getElementById("myCanvas").height = (h * 0.8);
@@ -44,6 +46,10 @@
 		// listening for when the input value changes
 		// once it changes, the color is updated to picker's value.
 		color = this.value;
+		lastColor = color;
+		// so that there aren't stray marks after closing the box.
+		// after picking a color, user will pen down to draw again.
+		// drawing = false;
 	})
 
 	function draw(xpos, ypos){
@@ -52,9 +58,12 @@
 		ypos -= canvas.offsetTop;
 		// the circle and its fill
 		ctx.fillStyle = color;
-	  ctx.arc(xpos, ypos, 5, 0, 2 * Math.PI);
-	  // template is: xpos, ypos, radius,starting angle, ending angle
-	  ctx.fill();
+		// for pendown/up
+		if (drawing == true) {
+		  ctx.arc(xpos, ypos, 5, 0, 2 * Math.PI);
+		  // template is: xpos, ypos, radius,starting angle, ending angle
+		  ctx.fill();
+		}
 	}
 
 	myCanvas.addEventListener('mousemove', function (e) {
@@ -85,20 +94,21 @@
 			color = "yellow";
 			lastColor = "yellow";
 		}
+		// arrow up
+		if (e.keyCode == 38) {
+			drawing = false;
+			// another easier but loophole method is:
+			// color = "transparent";
+		}
+		// arrow down
+		if (e.keyCode == 40) {
+			drawing = true;
+			color = lastColor;
+		}
 		// pressing space clears the canvas
 		if (e.keyCode == 32) {
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
 			// template is: starts at 0, 0, and spans to the canvas width and height
-		}
-		// arrow up
-		if (e.keyCode == 38) {
-			// the only method I could think of to "lift" the pen lol
-			color = "transparent";
-		}
-		// arrow down
-		if (e.keyCode == 40) {
-			// the color is reverted from transparent back to the last used color
-			color = lastColor;
 		}
 	})
 
